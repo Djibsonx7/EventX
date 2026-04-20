@@ -40,7 +40,7 @@ const gameModes = [
   },
 ]
 
-export default function CreateSessionPage({ onBackClick }) {
+export default function CreateSessionPage({ onBackClick, onLaunch }) {
   const [selectedKey, setSelectedKey] = useState('quiz')
 
   const selectedMode = useMemo(
@@ -102,6 +102,18 @@ export default function CreateSessionPage({ onBackClick }) {
                   </motion.button>
                 )
               })}
+            </div>
+
+            <div className="mt-8 flex flex-wrap gap-4">
+              <button
+                onClick={() => onLaunch?.(selectedMode.title)}
+                className="px-6 py-4 rounded-2xl bg-gradient-to-r from-[#7c3aed] to-[#ec4899] font-semibold shadow-[0_0_35px_rgba(124,58,237,0.35)]"
+              >
+                Launch Session
+              </button>
+              <button className="px-6 py-4 rounded-2xl bg-white/8 border border-white/10 font-semibold text-white/80">
+                Save as Draft
+              </button>
             </div>
           </div>
 
