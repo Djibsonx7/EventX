@@ -7,7 +7,7 @@ const modules = [
   'Spin & Win',
 ]
 
-export default function HomePage() {
+export default function HomePage({ onCreateClick, onJoinClick }) {
   return (
     <div className="min-h-screen bg-[#070816] text-white relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(124,58,237,0.35),_transparent_35%),linear-gradient(180deg,#070816_0%,#0d1227_100%)]" />
@@ -43,10 +43,16 @@ export default function HomePage() {
             </motion.p>
 
             <div className="mt-10 flex flex-wrap gap-4">
-              <button className="px-7 py-4 rounded-2xl bg-gradient-to-r from-[#7c3aed] to-[#ec4899] font-semibold shadow-[0_0_40px_rgba(124,58,237,0.35)]">
+              <button
+                onClick={onCreateClick}
+                className="px-7 py-4 rounded-2xl bg-gradient-to-r from-[#7c3aed] to-[#ec4899] font-semibold shadow-[0_0_40px_rgba(124,58,237,0.35)]"
+              >
                 Create a Live Session
               </button>
-              <button className="px-7 py-4 rounded-2xl bg-white/8 border border-white/10 backdrop-blur font-semibold text-white/85">
+              <button
+                onClick={onJoinClick}
+                className="px-7 py-4 rounded-2xl bg-white/8 border border-white/10 backdrop-blur font-semibold text-white/85"
+              >
                 Join with Code
               </button>
             </div>
