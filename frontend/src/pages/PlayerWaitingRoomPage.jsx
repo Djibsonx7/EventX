@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 
-export default function PlayerWaitingRoomPage({ sessionCode = 'EVX-4821', mode = 'Spin & Win', onBackClick }) {
+export default function PlayerWaitingRoomPage({ sessionCode = 'EVX-4821', mode = 'Spin & Win', onBackClick, onStartClick }) {
   return (
     <div className="min-h-screen bg-[#07101d] text-white">
       <div className="max-w-5xl mx-auto px-4 py-6 sm:px-6 sm:py-10">
@@ -37,9 +37,17 @@ export default function PlayerWaitingRoomPage({ sessionCode = 'EVX-4821', mode =
                 ))}
               </div>
 
-              <button className="mt-6 w-full px-6 py-4 rounded-2xl bg-gradient-to-r from-[#7c3aed] to-[#ec4899] font-semibold shadow-[0_0_35px_rgba(124,58,237,0.35)]">
-                I’m Ready
-              </button>
+              <div className="mt-6 flex flex-col gap-3">
+                <button className="w-full px-6 py-4 rounded-2xl bg-gradient-to-r from-[#7c3aed] to-[#ec4899] font-semibold shadow-[0_0_35px_rgba(124,58,237,0.35)]">
+                  I’m Ready
+                </button>
+                <button
+                  onClick={onStartClick}
+                  className="w-full px-6 py-4 rounded-2xl bg-white/8 border border-white/10 font-semibold text-white/80"
+                >
+                  Simulate Game Start
+                </button>
+              </div>
             </div>
           </div>
 
