@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion'
+import { useState } from 'react'
 
-export default function JoinSessionPage({ onBackClick }) {
+export default function JoinSessionPage({ onBackClick, onJoin }) {
+  const [sessionCode, setSessionCode] = useState('EVX-4821')
+
   return (
     <div className="min-h-screen bg-[#08101f] text-white">
       <div className="max-w-6xl mx-auto px-6 py-10">
@@ -23,10 +26,15 @@ export default function JoinSessionPage({ onBackClick }) {
               <label className="block text-sm text-white/55 mb-3">Session Code</label>
               <input
                 type="text"
+                value={sessionCode}
+                onChange={(e) => setSessionCode(e.target.value.toUpperCase())}
                 placeholder="EX: EVTX26"
                 className="w-full rounded-2xl bg-[#0a1324] border border-white/10 px-5 py-4 text-xl tracking-[0.25em] uppercase outline-none"
               />
-              <button className="mt-5 w-full px-6 py-4 rounded-2xl bg-gradient-to-r from-[#7c3aed] to-[#ec4899] font-semibold shadow-[0_0_35px_rgba(124,58,237,0.3)]">
+              <button
+                onClick={() => onJoin?.(sessionCode)}
+                className="mt-5 w-full px-6 py-4 rounded-2xl bg-gradient-to-r from-[#7c3aed] to-[#ec4899] font-semibold shadow-[0_0_35px_rgba(124,58,237,0.3)]"
+              >
                 Join Session
               </button>
               <div className="mt-4 text-center text-white/45 text-sm">or scan a QR code on the event screen</div>
