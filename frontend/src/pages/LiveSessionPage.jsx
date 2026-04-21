@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useMemo } from 'react'
 
 const mockPlayers = [
   { name: 'Awa', score: 120 },
@@ -15,6 +16,9 @@ export default function LiveSessionPage({
   readyPlayers = 18,
   sponsorEnabled = true,
   eventName = 'Innovation Summit Quiz',
+  sponsorName = 'Edition Limitée',
+  hostName = 'EventX Studio',
+  theme,
   currentRound = 1,
   onBackClick,
   onStartExperience,
@@ -24,6 +28,18 @@ export default function LiveSessionPage({
   const statusTone = isLive
     ? 'bg-fuchsia-500/15 border-fuchsia-400/20 text-fuchsia-200'
     : 'bg-emerald-500/15 border-emerald-400/20 text-emerald-300'
+
+  const themeStyle = useMemo(
+    () => ({
+      accentFrom: theme?.accentFrom || '#7c3aed',
+      accentTo: theme?.accentTo || '#ec4899',
+      heroFrom: theme?.heroFrom || '#2a0c55',
+      heroVia: theme?.heroVia || '#2d1e7f',
+      heroTo: theme?.heroTo || '#0f172a',
+      badge: theme?.badge || 'Premium Glow',
+    }),
+    [theme]
+  )
 
   return (
     <div className="min-h-screen bg-[#07101d] text-white">
@@ -39,12 +55,12 @@ export default function LiveSessionPage({
           <div>
             <div className="text-xs uppercase tracking-[0.35em] text-white/45">Live Control Room</div>
             <h1 className="text-4xl md:text-5xl font-black mt-3">
-              {isLive ? 'The audience experience is now live.' : 'Session ready to go live.'}
+              {isLive ? `${eventName} is now live.` : `${eventName} is ready to go live.`}
             </h1>
             <p className="mt-4 text-white/65 text-lg max-w-2xl">
               {isLive
-                ? 'Players are now inside the experience. Use this view as the host command center.'
-                : 'Share the session code, let participants join, and launch the experience when the room is ready.'}
+                ? `${hostName} is driving the live moment while ${sponsorName} stays visible across the experience.`
+                : `Share the session code, let participants join, and launch a branded audience experience when the room is ready.`}
             </p>
 
             <div className="mt-8 rounded-[30px] border border-white/10 bg-gradient-to-br from-[#151d34] to-[#0a1221] p-6 shadow-2xl">
@@ -59,7 +75,20 @@ export default function LiveSessionPage({
                 </div>
               </div>
 
-              <div className="mt-8 grid md:grid-cols-4 gap-4">
+              <div className="mt-6 grid md:grid-cols-3 gap-4">
+                {[
+                  ['Host', hostName],
+                  ['Sponsor', sponsorName],
+                  ['Theme', themeStyle.badge],
+                ].map(([label, value]) => (
+                  <div key={label} className="rounded-2xl bg-white/[0.04] border border-white/10 px-4 py-4">
+                    <div className="text-xs uppercase tracking-[0.25em] text-white/40">{label}</div>
+                    <div className="mt-2 text-lg font-bold">{value}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 grid md:grid-cols-4 gap-4">
                 {[
                   ['Mode', mode],
                   ['Participants', `${playersJoined} joined`],
@@ -77,7 +106,10 @@ export default function LiveSessionPage({
                 <button
                   onClick={onStartExperience}
                   disabled={isLive}
-                  className="px-6 py-4 rounded-2xl bg-gradient-to-r from-[#7c3aed] to-[#ec4899] font-semibold shadow-[0_0_35px_rgba(124,58,237,0.35)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-4 rounded-2xl font-semibold shadow-[0_0_35px_rgba(124,58,237,0.35)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    background: `linear-gradient(90deg, ${themeStyle.accentFrom}, ${themeStyle.accentTo})`,
+                  }}
                 >
                   {isLive ? 'Experience Running' : 'Start Experience'}
                 </button>
@@ -97,34 +129,43 @@ export default function LiveSessionPage({
             <div className="mt-3 text-2xl font-bold">Audience View</div>
 
             <div className="mt-6 rounded-[26px] border border-white/10 bg-[#0b1326] overflow-hidden">
-              <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
+              <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between gap-3 flex-wrap">
                 <div>
                   <div className="text-xs uppercase tracking-[0.25em] text-white/40">
                     {isLive ? 'Now Playing' : 'Now Joining'}
                   </div>
                   <div className="text-lg font-bold mt-1">{mode}</div>
+                  <div className="text-white/50 text-sm mt-1">{eventName}</div>
                 </div>
                 <div className="px-3 py-1 rounded-full bg-white/10 text-xs font-semibold">
-                  {sponsorEnabled ? 'Sponsor On' : 'Sponsor Off'}
+                  {sponsorEnabled ? sponsorName : 'Sponsor Off'}
                 </div>
               </div>
 
               <div className="p-5 space-y-4">
-                <div className="rounded-3xl min-h-[220px] bg-gradient-to-br from-[#34116a] via-[#35207f] to-[#111a31] border border-white/10 p-6 flex flex-col justify-between">
-                  <div className="flex items-start justify-between">
-                    <div className="h-12 w-12 rounded-full bg-white/15 border border-white/20" />
+                <div
+                  className="rounded-3xl min-h-[220px] border border-white/10 p-6 flex flex-col justify-between"
+                  style={{
+                    background: `linear-gradient(135deg, ${themeStyle.heroFrom}, ${themeStyle.heroVia}, ${themeStyle.heroTo})`,
+                  }}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="h-12 w-12 rounded-full bg-white/15 border border-white/20" />
+                      <div className="mt-3 text-xs uppercase tracking-[0.24em] text-white/55">Hosted by {hostName}</div>
+                    </div>
                     <div className="px-3 py-1 rounded-full bg-black/30 text-xs font-bold">
-                      {isLive ? 'Live Round' : 'Waiting Countdown'}
+                      {isLive ? 'Live Round' : themeStyle.badge}
                     </div>
                   </div>
                   <div>
                     <div className="text-3xl font-black leading-tight">
                       {isLive
-                        ? 'The host has launched the experience. Players are now answering live.'
-                        : 'Join now and be ready when the host launches the session.'}
+                        ? `${sponsorName} is live on screen while players answer in real time.`
+                        : `Join ${eventName} now and get ready for a polished live audience experience.`}
                     </div>
                     <div className="mt-3 text-white/70 text-sm">
-                      Live room • Sponsor visibility • Mobile-first participation • Premium event feel
+                      Sponsor visibility • Mobile-first participation • Premium event feel • Stage-ready visuals
                     </div>
                   </div>
                 </div>
