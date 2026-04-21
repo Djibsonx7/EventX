@@ -8,6 +8,17 @@ import PlayerGamePage from './pages/PlayerGamePage'
 
 const SESSION_STORAGE_KEY = 'eventx-live-session'
 
+const defaultTheme = {
+  key: 'neonPulse',
+  label: 'Neon Pulse',
+  accentFrom: '#7c3aed',
+  accentTo: '#ec4899',
+  heroFrom: '#2a0c55',
+  heroVia: '#2d1e7f',
+  heroTo: '#0f172a',
+  badge: 'Premium Glow',
+}
+
 const defaultSession = {
   code: 'EVX-4821',
   mode: 'Quiz Battle Live',
@@ -16,6 +27,9 @@ const defaultSession = {
   readyPlayers: 18,
   sponsorEnabled: true,
   eventName: 'Innovation Summit Quiz',
+  sponsorName: 'Edition Limitée',
+  hostName: 'EventX Studio',
+  theme: defaultTheme,
   currentRound: 1,
 }
 
@@ -27,7 +41,11 @@ function loadStoredSession() {
 
   try {
     const parsedSession = JSON.parse(rawSession)
-    return { ...defaultSession, ...parsedSession }
+    return {
+      ...defaultSession,
+      ...parsedSession,
+      theme: { ...defaultTheme, ...(parsedSession?.theme || {}) },
+    }
   } catch {
     return defaultSession
   }
@@ -36,6 +54,10 @@ function loadStoredSession() {
 function persistSession(nextSession) {
   if (typeof window === 'undefined') return
   window.localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(nextSession))
+}
+
+function createSessionCode() {
+  return `EVX-${Math.floor(1000 + Math.random() * 9000)}`
 }
 
 export default function App() {
@@ -53,7 +75,11 @@ export default function App() {
 
       try {
         const nextSession = JSON.parse(event.newValue)
-        setSession((current) => ({ ...current, ...nextSession }))
+        setSession((current) => ({
+          ...current,
+          ...nextSession,
+          theme: { ...defaultTheme, ...(nextSession?.theme || {}) },
+        }))
       } catch {
         // Ignore malformed storage payloads.
       }
@@ -72,8 +98,13 @@ export default function App() {
   const updateSession = (updater) => {
     setSession((current) => {
       const nextSession = typeof updater === 'function' ? updater(current) : updater
-      persistSession(nextSession)
-      return nextSession
+      const mergedSession = {
+        ...current,
+        ...nextSession,
+        theme: { ...defaultTheme, ...(nextSession?.theme || current.theme || {}) },
+      }
+      persistSession(mergedSession)
+      return mergedSession
     })
   }
 
@@ -86,18 +117,27 @@ export default function App() {
       readyPlayers: session.readyPlayers,
       sponsorEnabled: session.sponsorEnabled,
       eventName: session.eventName,
+      sponsorName: session.sponsorName,
+      hostName: session.hostName,
+      theme: session.theme,
       currentRound: session.currentRound,
     }),
     [session]
   )
 
-  const handleLaunchSession = (mode) => {
+  const handleLaunchSession = (payload) => {
     updateSession((current) => ({
       ...current,
-      mode,
+      code: createSessionCode(),
+      mode: payload?.mode || current.mode,
       status: 'waiting',
       playersJoined: 24,
       readyPlayers: 18,
+      sponsorEnabled: true,
+      eventName: payload?.eventName || current.eventName,
+      sponsorName: payload?.sponsorName || current.sponsorName,
+      hostName: payload?.hostName || current.hostName,
+      theme: payload?.theme || current.theme,
       currentRound: 1,
     }))
     setPage('live')
@@ -147,10 +187,7 @@ export default function App() {
   if (page === 'join') {
     return (
       <JoinSessionPage
-        sessionCode={session.code}
-        eventName={session.eventName}
-        mode={session.mode}
-        status={session.status}
+        {...sessionSummary}
         onBackClick={() => setPage('home')}
         onJoin={handleJoinSession}
       />
