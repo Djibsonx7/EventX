@@ -4,6 +4,7 @@ import CreateSessionPage from './pages/CreateSessionPage'
 import JoinSessionPage from './pages/JoinSessionPage'
 import LiveSessionPage from './pages/LiveSessionPage'
 import PlayerWaitingRoomPage from './pages/PlayerWaitingRoomPage'
+import PlayerGamePage from './pages/PlayerGamePage'
 
 export default function App() {
   const [page, setPage] = useState('home')
@@ -35,6 +36,15 @@ export default function App() {
       <PlayerWaitingRoomPage
         mode={sessionMode}
         onBackClick={() => setPage('home')}
+      />
+    )
+  }
+
+  if (page === 'game') {
+    return (
+      <PlayerGamePage
+        mode={sessionMode}
+        onBackClick={() => setPage('player')}
       />
     )
   }
