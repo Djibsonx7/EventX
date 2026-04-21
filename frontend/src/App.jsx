@@ -36,6 +36,7 @@ export default function App() {
       <PlayerWaitingRoomPage
         mode={sessionMode}
         onBackClick={() => setPage('home')}
+        onStartClick={() => setPage('game')}
       />
     )
   }
