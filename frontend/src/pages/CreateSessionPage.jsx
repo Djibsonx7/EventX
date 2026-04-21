@@ -40,13 +40,60 @@ const gameModes = [
   },
 ]
 
+const themePresets = {
+  neonPulse: {
+    key: 'neonPulse',
+    label: 'Neon Pulse',
+    accentFrom: '#7c3aed',
+    accentTo: '#ec4899',
+    heroFrom: '#2a0c55',
+    heroVia: '#2d1e7f',
+    heroTo: '#0f172a',
+    badge: 'Premium Glow',
+  },
+  electricBlue: {
+    key: 'electricBlue',
+    label: 'Electric Blue',
+    accentFrom: '#2563eb',
+    accentTo: '#06b6d4',
+    heroFrom: '#102a5c',
+    heroVia: '#153b82',
+    heroTo: '#0f1b35',
+    badge: 'Blue Stage',
+  },
+  emeraldStage: {
+    key: 'emeraldStage',
+    label: 'Emerald Stage',
+    accentFrom: '#059669',
+    accentTo: '#22c55e',
+    heroFrom: '#0d3b32',
+    heroVia: '#145647',
+    heroTo: '#0f1f1c',
+    badge: 'Fresh Impact',
+  },
+}
+
 export default function CreateSessionPage({ onBackClick, onLaunch }) {
   const [selectedKey, setSelectedKey] = useState('quiz')
+  const [eventName, setEventName] = useState('Innovation Summit Quiz')
+  const [sponsorName, setSponsorName] = useState('Edition Limitée')
+  const [themeKey, setThemeKey] = useState('neonPulse')
+  const [hostName, setHostName] = useState('EventX Studio')
 
   const selectedMode = useMemo(
     () => gameModes.find((mode) => mode.key === selectedKey) || gameModes[0],
     [selectedKey]
   )
+
+  const selectedTheme = themePresets[themeKey] || themePresets.neonPulse
+
+  const launchPayload = {
+    mode: selectedMode.title,
+    eventName: eventName.trim() || selectedMode.theme,
+    sponsorName: sponsorName.trim() || 'Edition Limitée',
+    hostName: hostName.trim() || 'EventX Studio',
+    theme: selectedTheme,
+  }
 
   return (
     <div className="min-h-screen bg-[#08101f] text-white">
@@ -104,10 +151,72 @@ export default function CreateSessionPage({ onBackClick, onLaunch }) {
               })}
             </div>
 
+            <div className="mt-8 grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-white/55 mb-3">Event Name</label>
+                <input
+                  type="text"
+                  value={eventName}
+                  onChange={(e) => setEventName(e.target.value)}
+                  className="w-full rounded-2xl bg-[#0a1324] border border-white/10 px-4 py-4 outline-none"
+                  placeholder="Innovation Summit Quiz"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-white/55 mb-3">Sponsor / Brand</label>
+                <input
+                  type="text"
+                  value={sponsorName}
+                  onChange={(e) => setSponsorName(e.target.value)}
+                  className="w-full rounded-2xl bg-[#0a1324] border border-white/10 px-4 py-4 outline-none"
+                  placeholder="Edition Limitée"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-white/55 mb-3">Host Label</label>
+                <input
+                  type="text"
+                  value={hostName}
+                  onChange={(e) => setHostName(e.target.value)}
+                  className="w-full rounded-2xl bg-[#0a1324] border border-white/10 px-4 py-4 outline-none"
+                  placeholder="EventX Studio"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-white/55 mb-3">Theme Preset</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {Object.values(themePresets).map((theme) => {
+                    const isActive = theme.key === themeKey
+                    return (
+                      <button
+                        key={theme.key}
+                        type="button"
+                        onClick={() => setThemeKey(theme.key)}
+                        className={`rounded-2xl border px-3 py-3 text-left ${
+                          isActive ? 'border-white/30 bg-white/10' : 'border-white/10 bg-white/[0.03]'
+                        }`}
+                      >
+                        <div
+                          className="h-8 rounded-xl mb-2"
+                          style={{
+                            background: `linear-gradient(135deg, ${theme.accentFrom}, ${theme.accentTo})`,
+                          }}
+                        />
+                        <div className="text-xs font-semibold">{theme.label}</div>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+
             <div className="mt-8 flex flex-wrap gap-4">
               <button
-                onClick={() => onLaunch?.(selectedMode.title)}
-                className="px-6 py-4 rounded-2xl bg-gradient-to-r from-[#7c3aed] to-[#ec4899] font-semibold shadow-[0_0_35px_rgba(124,58,237,0.35)]"
+                onClick={() => onLaunch?.(launchPayload)}
+                className="px-6 py-4 rounded-2xl font-semibold shadow-[0_0_35px_rgba(124,58,237,0.35)]"
+                style={{
+                  background: `linear-gradient(90deg, ${selectedTheme.accentFrom}, ${selectedTheme.accentTo})`,
+                }}
               >
                 Launch Session
               </button>
@@ -124,16 +233,24 @@ export default function CreateSessionPage({ onBackClick, onLaunch }) {
               <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
                 <div>
                   <div className="text-xs uppercase tracking-[0.25em] text-white/40">Session Theme</div>
-                  <div className="text-lg font-bold mt-1">{selectedMode.theme}</div>
+                  <div className="text-lg font-bold mt-1">{launchPayload.eventName}</div>
                 </div>
-                <div className="px-3 py-1 rounded-full bg-white/10 text-xs font-semibold">Sponsored</div>
+                <div className="px-3 py-1 rounded-full bg-white/10 text-xs font-semibold">{selectedTheme.badge}</div>
               </div>
 
               <div className="p-5 space-y-4">
-                <div className="rounded-3xl bg-gradient-to-br from-[#2a0c55] via-[#2d1e7f] to-[#0f172a] min-h-[210px] border border-white/10 p-6 flex flex-col justify-between">
+                <div
+                  className="rounded-3xl min-h-[210px] border border-white/10 p-6 flex flex-col justify-between"
+                  style={{
+                    background: `linear-gradient(135deg, ${selectedTheme.heroFrom}, ${selectedTheme.heroVia}, ${selectedTheme.heroTo})`,
+                  }}
+                >
                   <div className="flex items-start justify-between">
-                    <div className="h-11 w-11 rounded-full bg-white/15 border border-white/20" />
-                    <div className="px-3 py-1 rounded-full bg-black/30 text-xs font-bold">Sponsor Media</div>
+                    <div>
+                      <div className="h-11 w-11 rounded-full bg-white/15 border border-white/20" />
+                      <div className="mt-3 text-xs uppercase tracking-[0.25em] text-white/55">Hosted by {launchPayload.hostName}</div>
+                    </div>
+                    <div className="px-3 py-1 rounded-full bg-black/30 text-xs font-bold">Sponsored by {launchPayload.sponsorName}</div>
                   </div>
                   <div>
                     <div className="text-3xl font-black leading-tight">{selectedMode.headline}</div>
