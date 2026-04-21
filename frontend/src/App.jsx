@@ -5,6 +5,7 @@ import JoinSessionPage from './pages/JoinSessionPage'
 import LiveSessionPage from './pages/LiveSessionPage'
 import PlayerWaitingRoomPage from './pages/PlayerWaitingRoomPage'
 import PlayerGamePage from './pages/PlayerGamePage'
+import ShowScreenPage from './pages/ShowScreenPage'
 
 const SESSION_STORAGE_KEY = 'eventx-live-session'
 
@@ -215,12 +216,17 @@ export default function App() {
     )
   }
 
+  if (page === 'show') {
+    return <ShowScreenPage {...sessionSummary} onBackClick={() => setPage('live')} />
+  }
+
   if (page === 'live') {
     return (
       <LiveSessionPage
         {...sessionSummary}
         onBackClick={() => setPage('create')}
         onStartExperience={handleStartExperience}
+        onDisplayShowScreen={() => setPage('show')}
       />
     )
   }
