@@ -68,7 +68,7 @@ Main goals:
 - analytics across organizations
 - future partner / agency management
 
-> Note: the Show Screen is still missing as a true dedicated surface.
+> Note: the Show Screen now exists as a dedicated prototype surface, but it is still a mock stage experience and not yet connected to a full moments engine.
 
 ---
 
@@ -81,6 +81,7 @@ Main goals:
 - Live Control Room page
 - Player Waiting Room page
 - Player Game page
+- dedicated `ShowScreenPage` prototype
 - local prototype session state in `frontend/src/App.jsx`
 - mock host -> player sync simulation
 - branding state with:
@@ -89,6 +90,14 @@ Main goals:
   - hostName
   - theme
 - propagation of branding across operator/player pages
+- display of a dedicated show screen from the live control room
+- show screen moment navigation for:
+  - lobby
+  - countdown
+  - question
+  - reveal
+  - leaderboard
+  - finale
 
 ### Partially built
 - Live experience flow
@@ -96,10 +105,11 @@ Main goals:
 - branding / sponsor presence
 - leaderboard visual layer
 - player game interaction
+- show screen stage experience
+- finale modules / celebration concepts
 
 ### Not yet built
-- dedicated Show Screen / Stage Screen
-- explicit session phases / moments engine
+- explicit session phases / moments engine connected across all surfaces
 - richer session engine (question index, reveal state, finale state, etc.)
 - real backend persistence
 - real join code validation
@@ -122,19 +132,45 @@ Main goals:
 - `frontend/src/pages/PlayerWaitingRoomPage.jsx`
 - `frontend/src/pages/PlayerGamePage.jsx`
 
+### Show side
+- `frontend/src/pages/ShowScreenPage.jsx`
+
 ### Core app state
 - `frontend/src/App.jsx`
 
 ---
 
+## Current validated decisions
+
+### Session code format
+The current prototype uses an `EVX-xxxx` session code format.
+This has been validated as acceptable for the MVP prototype because it is:
+- short
+- memorable
+- visually aligned with EventX
+- easy to display on stage and mobile
+
+### Show screen direction
+The show screen has been positively validated as:
+- premium
+- readable
+- visually impressive
+- organized around explicit moments
+
+### Finale placeholders
+The finale currently contains stage modules such as:
+- Confetti Burst
+- Sponsor Highlight
+- Winner Podium
+
+These are not final business actions. They are intentional **experience modules to develop later** as part of the final stage celebration flow.
+
+---
+
 ## Current gaps in the architecture
 
-### Gap 1 — Show Screen
-The product still lacks a dedicated public screen / stage screen.
-This is currently the most visible architectural missing piece.
-
-### Gap 2 — Moments / phases
-The product still lacks an explicit experience model such as:
+### Gap 1 — Connected moments engine
+The product still lacks an explicit experience model connected across surfaces such as:
 - lobby / warm-up
 - countdown / launch
 - question live
@@ -143,7 +179,9 @@ The product still lacks an explicit experience model such as:
 - leaderboard
 - finale
 
-### Gap 3 — richer session engine
+The moments now exist in the show screen mock, but they are not yet connected as a unified session engine.
+
+### Gap 2 — richer session engine
 The state model is still too light for the final experience.
 Needed later:
 - phase
@@ -154,12 +192,20 @@ Needed later:
 - finale state
 - show mode
 
-### Gap 4 — business value layer
+### Gap 3 — business value layer
 Still missing:
 - analytics
 - sponsor visibility metrics
 - participation metrics
 - ROI reporting
+
+### Gap 4 — full sponsor and branding configuration
+Branding is now present visually, but still needs a more complete configurable layer for:
+- sponsor media
+- logos
+- organization identity
+- event theme presets
+- reusable brand configuration
 
 ---
 
@@ -171,7 +217,7 @@ That means each important block should include:
 - operator side
 - player side
 - visible demo flow
-- later, stage/spectacle side if relevant
+- stage/spectacle side when relevant
 
 ---
 
@@ -225,18 +271,19 @@ Expected content:
 ## What should be built next
 
 ### Immediate next architecture block
-1. Add a dedicated **ShowScreenPage**
-2. Add a real notion of **phase / moment** in session state
-3. Separate the 3 event surfaces more clearly:
+1. Add a real notion of **phase / moment** in session state
+2. Connect the 3 event surfaces more clearly:
    - operator
    - player
    - show
+3. Make the show screen moments react to real session state instead of manual switching only
 
 ### After that
 4. Enrich the Quiz Battle Live flow moment by moment
 5. Improve transitions, avatars, motion, and live energy
 6. Add richer scoring / reveal / leaderboard behavior
-7. Move later to backend + analytics
+7. Add fuller sponsor and theme configuration
+8. Move later to backend + analytics
 
 ---
 
@@ -259,10 +306,11 @@ EventX already has:
 - a strong operator surface
 - a visible player surface
 - a coherent branding layer
+- a dedicated show screen prototype
 - a demo-worthy prototype flow
 
 EventX still needs:
-- a true show screen
-- a clearer moments engine
+- a connected moments engine
 - a richer session engine
+- fuller sponsor and branding configuration
 - later, analytics and platform layers
