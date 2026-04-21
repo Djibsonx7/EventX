@@ -3,6 +3,7 @@ import HomePage from './pages/HomePage'
 import CreateSessionPage from './pages/CreateSessionPage'
 import JoinSessionPage from './pages/JoinSessionPage'
 import LiveSessionPage from './pages/LiveSessionPage'
+import PlayerWaitingRoomPage from './pages/PlayerWaitingRoomPage'
 
 export default function App() {
   const [page, setPage] = useState('home')
@@ -21,7 +22,21 @@ export default function App() {
   }
 
   if (page === 'join') {
-    return <JoinSessionPage onBackClick={() => setPage('home')} />
+    return (
+      <JoinSessionPage
+        onBackClick={() => setPage('home')}
+        onJoin={() => setPage('player')}
+      />
+    )
+  }
+
+  if (page === 'player') {
+    return (
+      <PlayerWaitingRoomPage
+        mode={sessionMode}
+        onBackClick={() => setPage('home')}
+      />
+    )
   }
 
   if (page === 'live') {
