@@ -22,6 +22,7 @@ export default function LiveSessionPage({
   currentRound = 1,
   onBackClick,
   onStartExperience,
+  onDisplayShowScreen,
 }) {
   const isLive = status === 'live'
   const [countdown, setCountdown] = useState(12)
@@ -144,7 +145,10 @@ export default function LiveSessionPage({
                 >
                   {isLive ? 'Experience Running' : 'Start Experience'}
                 </button>
-                <button className="px-6 py-4 rounded-2xl bg-white/8 border border-white/10 font-semibold text-white/80">
+                <button
+                  onClick={onDisplayShowScreen}
+                  className="px-6 py-4 rounded-2xl bg-white/8 border border-white/10 font-semibold text-white/80"
+                >
                   Display QR Screen
                 </button>
               </div>
