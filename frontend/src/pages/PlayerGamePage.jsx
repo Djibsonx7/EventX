@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 
 const quizQuestion = {
@@ -9,17 +9,11 @@ const quizQuestion = {
     'Long speeches',
     'Silent participation',
   ],
-  correctIndex: 0,
 }
 
 const pollQuestion = {
   title: 'What matters most to your audience today?',
-  answers: [
-    'Interaction',
-    'Networking',
-    'Learning',
-    'Rewards',
-  ],
+  answers: ['Interaction', 'Networking', 'Learning', 'Rewards'],
 }
 
 function getQuestionByMode(mode) {
@@ -27,10 +21,25 @@ function getQuestionByMode(mode) {
   return quizQuestion
 }
 
-export default function PlayerGamePage({ mode = 'Quiz Battle Live', onBackClick }) {
+export default function PlayerGamePage({
+  sessionCode = 'EVX-4821',
+  mode = 'Quiz Battle Live',
+  sponsorName = 'Edition Limitée',
+  eventName = 'Innovation Summit Quiz',
+  theme,
+  onBackClick,
+}) {
   const question = getQuestionByMode(mode)
   const [selected, setSelected] = useState(null)
   const [submitted, setSubmitted] = useState(false)
+
+  const themeStyle = useMemo(
+    () => ({
+      accentFrom: theme?.accentFrom || '#7c3aed',
+      accentTo: theme?.accentTo || '#ec4899',
+    }),
+    [theme]
+  )
 
   return (
     <div className="min-h-screen bg-[#07101d] text-white">
@@ -42,19 +51,24 @@ export default function PlayerGamePage({ mode = 'Quiz Battle Live', onBackClick 
           ← Back
         </button>
 
+        <div className="mb-4 text-center">
+          <div className="text-xs uppercase tracking-[0.3em] text-white/40">{eventName}</div>
+          <div className="text-sm text-white/60 mt-1">Powered by {sponsorName}</div>
+        </div>
+
         <div className="grid lg:grid-cols-[0.95fr_1.05fr] gap-6 items-start">
           <div className="rounded-[28px] border border-white/10 bg-white/[0.04] backdrop-blur-xl p-5 sm:p-6">
             <div className="text-xs uppercase tracking-[0.35em] text-white/45">Player Experience</div>
-            <h1 className="text-3xl sm:text-4xl font-black mt-3 leading-tight">{mode} is now live.</h1>
+            <h1 className="text-3xl sm:text-4xl font-black mt-3 leading-tight">{mode} is live.</h1>
             <p className="mt-4 text-white/65 text-base sm:text-lg">
-              Answer quickly, stay engaged, and watch the live board react to the crowd.
+              Stay focused and react fast. Every answer impacts the live ranking.
             </p>
 
             <div className="mt-6 grid grid-cols-2 gap-3">
               {[
-                ['Session', 'EVX-4821'],
+                ['Session', sessionCode],
                 ['Mode', mode],
-                ['Sponsor', 'Enabled'],
+                ['Sponsor', sponsorName],
                 ['State', submitted ? 'Answered' : 'Live'],
               ].map(([label, value]) => (
                 <div key={label} className="rounded-2xl bg-white/[0.04] border border-white/10 px-4 py-4">
@@ -104,7 +118,10 @@ export default function PlayerGamePage({ mode = 'Quiz Battle Live', onBackClick 
               <button
                 disabled={selected === null || submitted}
                 onClick={() => setSubmitted(true)}
-                className="px-6 py-4 rounded-2xl bg-gradient-to-r from-[#7c3aed] to-[#ec4899] font-semibold shadow-[0_0_35px_rgba(124,58,237,0.35)] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-4 rounded-2xl font-semibold shadow-[0_0_35px_rgba(124,58,237,0.35)] disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  background: `linear-gradient(90deg, ${themeStyle.accentFrom}, ${themeStyle.accentTo})`,
+                }}
               >
                 Submit Answer
               </button>
