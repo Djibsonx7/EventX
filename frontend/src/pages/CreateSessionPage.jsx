@@ -76,7 +76,7 @@ const themePresets = {
 export default function CreateSessionPage({ onBackClick, onLaunch }) {
   const [selectedKey, setSelectedKey] = useState('quiz')
   const [eventName, setEventName] = useState('Innovation Summit Quiz')
-  const [sponsorName, setSponsorName] = useState('Edition Limitée')
+  const [sponsorName, setSponsorName] = useState('Nova Partner')
   const [themeKey, setThemeKey] = useState('neonPulse')
   const [hostName, setHostName] = useState('EventX Studio')
 
@@ -90,7 +90,7 @@ export default function CreateSessionPage({ onBackClick, onLaunch }) {
   const launchPayload = {
     mode: selectedMode.title,
     eventName: eventName.trim() || selectedMode.theme,
-    sponsorName: sponsorName.trim() || 'Edition Limitée',
+    sponsorName: sponsorName.trim() || 'Nova Partner',
     hostName: hostName.trim() || 'EventX Studio',
     theme: selectedTheme,
   }
@@ -169,7 +169,7 @@ export default function CreateSessionPage({ onBackClick, onLaunch }) {
                   value={sponsorName}
                   onChange={(e) => setSponsorName(e.target.value)}
                   className="w-full rounded-2xl bg-[#0a1324] border border-white/10 px-4 py-4 outline-none"
-                  placeholder="Edition Limitée"
+                  placeholder="Nova Partner"
                 />
               </div>
               <div>
