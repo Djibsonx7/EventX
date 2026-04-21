@@ -6,6 +6,8 @@ import LiveSessionPage from './pages/LiveSessionPage'
 import PlayerWaitingRoomPage from './pages/PlayerWaitingRoomPage'
 import PlayerGamePage from './pages/PlayerGamePage'
 
+const SESSION_STORAGE_KEY = 'eventx-live-session'
+
 const defaultSession = {
   code: 'EVX-4821',
   mode: 'Quiz Battle Live',
@@ -17,16 +19,63 @@ const defaultSession = {
   currentRound: 1,
 }
 
+function loadStoredSession() {
+  if (typeof window === 'undefined') return defaultSession
+
+  const rawSession = window.localStorage.getItem(SESSION_STORAGE_KEY)
+  if (!rawSession) return defaultSession
+
+  try {
+    const parsedSession = JSON.parse(rawSession)
+    return { ...defaultSession, ...parsedSession }
+  } catch {
+    return defaultSession
+  }
+}
+
+function persistSession(nextSession) {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(nextSession))
+}
+
 export default function App() {
   const [page, setPage] = useState('home')
   const [playerName, setPlayerName] = useState('You')
-  const [session, setSession] = useState(defaultSession)
+  const [session, setSession] = useState(loadStoredSession)
+
+  useEffect(() => {
+    persistSession(session)
+  }, [session])
+
+  useEffect(() => {
+    const handleStorage = (event) => {
+      if (event.key !== SESSION_STORAGE_KEY || !event.newValue) return
+
+      try {
+        const nextSession = JSON.parse(event.newValue)
+        setSession((current) => ({ ...current, ...nextSession }))
+      } catch {
+        // Ignore malformed storage payloads.
+      }
+    }
+
+    window.addEventListener('storage', handleStorage)
+    return () => window.removeEventListener('storage', handleStorage)
+  }, [])
 
   useEffect(() => {
     if (page === 'player' && session.status === 'live') {
       setPage('game')
     }
   }, [page, session.status])
+
+  const updateSession = (updater) => {
+    setSession((current) => {
+      const nextSession = typeof updater === 'function' ? updater(current) : updater
+      persistSession(nextSession)
+      return nextSession
+    })
+  }
 
   const sessionSummary = useMemo(
     () => ({
@@ -43,7 +92,7 @@ export default function App() {
   )
 
   const handleLaunchSession = (mode) => {
-    setSession((current) => ({
+    updateSession((current) => ({
       ...current,
       mode,
       status: 'waiting',
@@ -56,24 +105,26 @@ export default function App() {
 
   const handleJoinSession = (code) => {
     const normalizedCode = code?.trim().toUpperCase() || defaultSession.code
+    const liveStatus = session.status
+
     setPlayerName('Guest Player')
-    setSession((current) => ({
+    updateSession((current) => ({
       ...current,
       code: normalizedCode,
       playersJoined: current.playersJoined + 1,
     }))
-    setPage(session.status === 'live' ? 'game' : 'player')
+    setPage(liveStatus === 'live' ? 'game' : 'player')
   }
 
   const handlePlayerReady = () => {
-    setSession((current) => ({
+    updateSession((current) => ({
       ...current,
       readyPlayers: Math.min(current.playersJoined, current.readyPlayers + 1),
     }))
   }
 
   const handleStartExperience = () => {
-    setSession((current) => ({
+    updateSession((current) => ({
       ...current,
       status: 'live',
       currentRound: 1,
